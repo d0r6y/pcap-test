@@ -1,7 +1,7 @@
 all: pcap-test
 
 pcap-test: main.o
-	g++ -g -o pcap-test main.o -lpcap
+	g++ -g -o pcap-test main.o -lpcap 
 
 main.o:
 	g++ -g -c -o main.o main.cpp
