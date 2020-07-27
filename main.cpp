@@ -12,13 +12,6 @@ const struct libnet_ipv4_hdr *ip;
 const struct libnet_tcp_hdr *tcp;
 const u_char *payload;
 
-struct ethernet_addr{
-	u_char byte[6];
-};
-
-struct ip_addr{
-	u_char byte[4];
-};
 uint8_t size_ip;
 uint8_t size_tcp;
 
@@ -71,8 +64,7 @@ void print_ethernet_header(const struct libnet_ethernet_hdr* eh){
  
  
 void print_ip_header(const struct libnet_ipv4_hdr *iph){
-	char * str = inet_ntoa(iph->ip_src);
-	printf("%s\n",str);
+
 	
 	printf("                  <IP Header>               \n");
 	printf("           SRC IP Addr [%s]\n",inet_ntoa(iph->ip_src));
@@ -121,9 +113,7 @@ void print_payload (const unsigned char * packet){
 };
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
-	printf("caplen : %d\n", header->caplen);
-	printf("len : %d\n", header->len);
-	
+
 	ethernet = (struct libnet_ethernet_hdr*)packet;
 	
 	ip = (struct libnet_ipv4_hdr *)(packet + SIZE_ETHERNET);
@@ -137,8 +127,8 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	
 	print_ethernet_header(ethernet);
 	print_ip_header(ip);
-	//print_tcp_header(tcp);
-	//print_payload(payload);
+	print_tcp_header(tcp);
+	print_payload(payload);
 	
 }
 
