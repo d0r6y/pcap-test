@@ -121,7 +121,14 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	size_ip = ip->ip_hl * 4;
 	
 	tcp = (struct libnet_tcp_hdr *)(packet + SIZE_ETHERNET + size_ip);
+	
+	
 	size_tcp = tcp->th_off * 4;
+	
+	if (size_tcp < 20) {
+		printf("Not TCP Packet\n");
+		return;
+	}
 	
 	payload = (const u_char*)(packet + SIZE_ETHERNET + size_ip + size_tcp);
 	
@@ -163,16 +170,6 @@ int main(int argc, char *argv[]){
 		return(2);
 	}
 
-	/* Compile and apply the filter */
-	if (pcap_compile(handle, &fp, filter_exp, 0, net) == -1) {
-		fprintf(stderr, "Couldn't parse filter %s: %s\n", filter_exp, pcap_geterr(handle));
-		return(2);
-	}
-
-	if (pcap_setfilter(handle, &fp) == -1) {
-		fprintf(stderr, "Couldn't install filter %s: %s\n", filter_exp, pcap_geterr(handle));
-		return(2);
-	}
 	
 	pcap_loop(handle, 10, got_packet, NULL);
 	
