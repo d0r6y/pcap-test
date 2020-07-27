@@ -3,13 +3,34 @@
 #include <stdint.h>
 #include <pcap.h>
 
-struct libnet_ethernet_hdr;
-struct libnet_ipv4_hdr;
-struct libnet_tcp_hdr;
+#define SIZE_ETHERNET 14
+
+const struct libnet_ethernet_hdr *ethernet;
+const struct libnet_ipv4_hdr *ip;
+const struct libnet_tcp_hdr *tcp;
+const u_char *payload;
+
+u_int size_ip;
+u_int size_tcp;
 
 void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *packet){
 	printf("caplen : %d\n", header->caplen);
 	printf("len : %d\n", header->len);
+	
+	ethernet = (struct libnet_ethernet_hdr*)packet;
+	
+	ip = (struct libnet_ipv4_hdr *)(packet + SIZE_ETHERNET);
+	
+	size_ip = ip->ip_hl * 4;
+	
+	tcp = (struct libnet_tcp_hdr *)(packet + SIZE_ETHERNET + size_ip);
+	size_tcp = tcp->th_off * 4;
+	
+	payload = (const u_char*)(packet + SIZE_ETHERNET + size_ip + size_tcp);
+	
+	printf("\n%d %d", size_ip, size_tcp);
+	
+	printf("\n%s",payload);
 }
 
 int main(int argc, char *argv[]){
@@ -54,7 +75,7 @@ int main(int argc, char *argv[]){
 		return(2);
 	}
 	
-	pcap_loop(handle, -1, got_packet, NULL);
+	pcap_loop(handle, 10, got_packet, NULL);
 	
 	// ----------------------------
 	/* Grab a packet */
