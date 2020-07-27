@@ -69,26 +69,19 @@ void print_ethernet_header(const struct libnet_ethernet_hdr* eh){
  * 3. print
  */
  
- /*
-int print_ip_header(const struct libnet_ipv4_hdr *iph){
+ 
+void print_ip_header(const struct libnet_ipv4_hdr *iph){
+	char * str = inet_ntoa(iph->ip_src);
+	printf("%s\n",str);
 	
-
 	printf("                  <IP Header>               \n");
-	printf("           SRC IP Addr [%d.%d.%d.%d]\n",
-		iph->ip_src.byte[0],
-		iph->ip_src.byte[1],
-		iph->ip_src.byte[2],
-		iph->ip_src.byte[3]);
+	printf("           SRC IP Addr [%s]\n",inet_ntoa(iph->ip_src));
 
-	printf("          DST IP Addr [%d.%d.%d.%d]\n",
-		iph->ip_dst.byte[0],
-		iph->ip_dst.byte[1],
-		iph->ip_dst.byte[2],
-		iph->ip_dst.byte[3]);
+	printf("          DST IP Addr [%s]\n", inet_ntoa(iph->ip_dst));
 	printf("------------------------------------------------\n");
-
+	
 };
-*/
+
 /*
  * Function that prints Port Number
  * 
@@ -98,7 +91,7 @@ int print_ip_header(const struct libnet_ipv4_hdr *iph){
  * 3. Since byte-order can affect the output, use ntohs() function in order to print the right answer whether my cpu is Little Endian or Big Endian
  * 4. print
  */
-int print_tcp_header(const struct libnet_tcp_hdr *th){
+void print_tcp_header(const struct libnet_tcp_hdr *th){
 	
 	printf("                  <TCP Header>               \n");
 	printf("                Src Port : %d\n", ntohs(th->th_sport));
@@ -143,7 +136,7 @@ void got_packet(u_char *args, const struct pcap_pkthdr *header, const u_char *pa
 	payload = (const u_char*)(packet + SIZE_ETHERNET + size_ip + size_tcp);
 	
 	print_ethernet_header(ethernet);
-	//print_ip_header(ip);
+	print_ip_header(ip);
 	//print_tcp_header(tcp);
 	//print_payload(payload);
 	
